@@ -23,6 +23,7 @@ var defaultLogger = []OutputConfig{
 type OutputConfig struct {
 	Writer       string       `yaml:"writer"`
 	Level        string       `yaml:"level"`
+	CallerSkip   int          `yaml:"caller_skip"`
 	WriterConfig WriterConfig `yaml:"writer_config"`
 }
 

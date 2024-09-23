@@ -1,0 +1,26 @@
+logger:
+  default:
+    - writer: file                                 #本地文件日志
+      level: info                                  #本地文件滚动日志的级别
+      writer_config: #本地文件输出具体配置
+        log_path: ./              #本地文件日志路径
+        filename: default.log                    #本地文件日志文件名
+        max_age: 7                              #最大日志保留天数
+        max_size: 10                            #本地文件滚动日志的大小 单位 MB
+        max_backups: 10                     #最大日志文件数
+        compress: false                       #日志文件是否压缩
+    - writer: console
+      level: info
+  test:
+    - writer: file
+      level: info
+      caller_skip: 1
+      writer_config:
+        log_path: ./
+        filename: test.log
+        max_age: 7
+        max_size: 10
+        max_backups: 10
+        compress: false
+    - writer: console
+      level: info

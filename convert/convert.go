@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-var converts = make(map[string]interface{})
+var converts = make(map[uint64]interface{})
 var mu sync.RWMutex
 
 type Converter[From, To any] interface {
@@ -13,25 +13,25 @@ type Converter[From, To any] interface {
 	Reverse(To) From
 }
 
-func Register[From, To any](key string, h Converter[From, To]) {
+func Register[From, To any](i uint64, h Converter[From, To]) {
 	mu.Lock()
 	defer mu.Unlock()
-	if _, exists := converts[key]; exists {
-		panic(fmt.Sprintf("converter already register key:%s", key))
+	if _, exists := converts[i]; exists {
+		panic(fmt.Sprintf("converter already register i:%d", i))
 	}
-	converts[key] = h
+	converts[i] = h
 }
 
-func Get[From, To any](key string) (Converter[From, To], error) {
+func Get[From, To any](i uint64) (Converter[From, To], error) {
 	mu.RLock()
-	v, exists := converts[key]
+	v, exists := converts[i]
 	if !exists {
-		return nil, fmt.Errorf("converter not found key:%s", key)
+		return nil, fmt.Errorf("converter not found key:%s", i)
 	}
 	mu.RUnlock()
 	h, ok := v.(Converter[From, To])
 	if !ok {
-		return nil, fmt.Errorf("converter type mismatch key:%s got:%T", key, v)
+		return nil, fmt.Errorf("converter type mismatch key:%d got:%T", i, v)
 	}
 	return h, nil
 }

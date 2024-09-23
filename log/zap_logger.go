@@ -19,13 +19,17 @@ var levelToZapLevel = map[string]zapcore.Level{
 // NewZapLog zap log
 func NewZapLog(c []OutputConfig) Logger {
 	var cores []zapcore.Core
+	callerSkip := 2
 	for _, o := range c {
+		if o.CallerSkip > 0 {
+			callerSkip = o.CallerSkip
+		}
 		cores = append(cores, newCore(&o))
 	}
 	return &zapLog{
 		l: zap.New(
 			zapcore.NewTee(cores...),
-			zap.AddCallerSkip(2),
+			zap.AddCallerSkip(callerSkip),
 			zap.AddCaller(),
 		),
 	}
